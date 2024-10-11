@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <!-- Place favicon.ico in the root directory -->
-
+  
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
       background-color: #e9ebee;
@@ -33,8 +33,34 @@
   </nav>
   <h1>tp2</h1>
   <!-- Add your site or application content here -->
+   <br>
   <p>Hello world! This is HTML5 Boilerplate.</p>
-  <img src="../galilee.png" alt="Logo Galilee" />
+  <img src="./logo_institut_galilee_1.jpg" alt="Logo Galilee" />
+  <br>
+  <p1> Validation de formulaire et lecture de données en JavaScript. </p1>
+
+  <form action ="action.html" methode="get">
+    <label for="name"> Nom: </label>
+    <input type="texte" id= "name" name="nom" minlength="2" maxlength="20" required><br><br>
+
+    <label for="firstname">Prénom: </label>
+    <input type="texte" id= "firstname" name="firstname" minlength="2" maxlength="20" required>
+    <br><br>
+    
+    <label for="birthday">Date de naissance:</label>
+    <input type="date" id="birthday" name="birthday" required>
+    <br><br>
+  
+    <label for="address">Adresse:</label>
+    <input type="text" id="address" name="address" minlength="5" maxlength="50" required>
+    <br><br>
+  
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" minlength="5" maxlength="30" required><br><br>
+  
+    <input type="submit" value="Envoyer">
+  </form>
+
 </body>
 
 </html>
