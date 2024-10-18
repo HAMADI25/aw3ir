@@ -1,39 +1,102 @@
 <!doctype html>
 <html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>TP4</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>TP4</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <!-- Place favicon.ico in the root directory -->
-
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <style>
-        body {
-            background-color: #e9ebee;
-            font-family: system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
-            font-size: 16px;
-            margin: 0 auto;
-            max-width: 800px;
-        }
-    </style>
-
-    <!-- Code à dé-commenter si besoin de fichier CSS ou JS -->
-    <!--<link rel="stylesheet" href="style.css">-->
-    <!--<script src="main.js"></script>-->
+          body{
+              background-color: #e9ebee;              
+              font-family: system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
+              font-size: 16px;
+              margin: 0 auto;
+              max-width: 800px;              
+          }
+        </style>
+    
+    <link rel="stylesheet" href="./css/bootstrap.css">
+    <title>Ajout de fonctionnalités HTML5 au formulaire</title>
 </head>
-
 <body>
-    <nav>
-        <a href="..">🏠 Index</a> / TP4
-    </nav>
-    <h1>TP4</h1>
-    <!-- Add your site or application content here -->
-    <p>Hello world! This is HTML5 Boilerplate.</p>
-    <img src="../galilee.png" alt="Logo Galilee" />
-</body>
+  <nav>
+    <a href="..">🏠 Index</a> / TP4
+</nav>
+<h1>TP4</h1>
+<!-- Add your site or application content here -->
+<p>Hello world! This is HTML5 Boilerplate.</p>
+<img src="./galilee.png" alt="Logo Galilee" /><br> 
 
+    <div class="container mt-5">
+        <form id="myForm">
+            <div class="mb-3">
+                <label for="nom" class="form-label">Nom</label> <small>(5 car.) </small>
+                <input type="text" class="form-control" id="nom" required><br>
+                
+
+            </div>
+            <div class="mb-3">
+                <label for="prenom" class="form-label">Prénom </label> <small>(5 car.) </small>
+                <input type="text" class="form-control" id="prenom" required><br>
+            </div>
+            <div class="mb-3">
+                <label for="dateNaissance" class="form-label">Date de naissance</label> <small>(10 car.) </small>
+                <input type="date" class="form-control" id="dateNaissance" required><br>
+            </div>
+            <div class="mb-3">
+                <label for="adressePostale" class="form-label">Adresse postale</label> <small>(16
+                     car.) </small>
+                <input type="text" class="form-control" id="adressePostale" required><br>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Soumettre</button>
+        </form>
+    </div>
+
+    <!-- Modal d'erreur -->
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Erreur de validation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Erreur dans le formulaire, tous les champs sont obligatoire.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'affichage de la carte -->
+    <div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mapModalLabel">Localisation sur Google Maps</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <a href="http://maps.google.com/maps?q=Paris" target="_blank">
+                        <img src="https://maps.googleapis.com/maps/api/staticmap?markers=Paris&zoom=14&size=400x300&scale=2&key=AIzaSyAkmvI9DazzG9p77IShsz_Di7-5Qn7zkcg" alt="Carte de Paris" class="img-fluid">
+                    </a>
+                  
+                    <div id="resultContainer" style="margin-top: 20px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/bootstrap.bundle.js"></script>
+    <script src="./js/form-validation.js"></script>
+</body>
 </html>
