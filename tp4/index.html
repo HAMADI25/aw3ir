@@ -9,14 +9,14 @@
 
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <style>
-          body{
+          body {
               background-color: #e9ebee;              
               font-family: system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
               font-size: 16px;
               margin: 0 auto;
               max-width: 800px;              
           }
-        </style>
+         </style>
     
     <link rel="stylesheet" href="./css/bootstrap.css">
     <title>Ajout de fonctionnalités HTML5 au formulaire</title>
@@ -26,77 +26,73 @@
     <a href="..">🏠 Index</a> / TP4
 </nav>
 <h1>TP4</h1>
-<!-- Add your site or application content here -->
+
 <p>Hello world! This is HTML5 Boilerplate.</p>
 <img src="./galilee.png" alt="Logo Galilee" /><br> 
+<h4 style="text-align: center;">TP AW #4 : Ajout de fonctionnalités HTML5 au formulaire</h4>
 
     <div class="container mt-5">
         <form id="myForm">
-            <div class="mb-3">
-                <label for="nom" class="form-label">Nom</label> <small>(5 car.) </small>
-                <input type="text" class="form-control" id="nom" required><br>
-                
-
-            </div>
-            <div class="mb-3">
-                <label for="prenom" class="form-label">Prénom </label> <small>(5 car.) </small>
-                <input type="text" class="form-control" id="prenom" required><br>
-            </div>
-            <div class="mb-3">
-                <label for="dateNaissance" class="form-label">Date de naissance</label> <small>(10 car.) </small>
-                <input type="date" class="form-control" id="dateNaissance" required><br>
-            </div>
-            <div class="mb-3">
-                <label for="adressePostale" class="form-label">Adresse postale</label> <small>(16
-                     car.) </small>
-                <input type="text" class="form-control" id="adressePostale" required><br>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="nom" placeholder="Nom" required onkeyup="calcNbChar(this.id)">
+                <span class="input-group-text"><span id="nom-count">0 car.</span>
             </div>
             
-            <button type="submit" class="btn btn-primary">Soumettre</button>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="prenom" placeholder="Prénom" required onkeyup="calcNbChar(this.id)">
+                <span class="input-group-text"><span id="prenom-count">0 car.</span> 
+            </div>
+            
+            <div class="input-group mb-3">
+                <input type="date" class="form-control" id="dateNaissance" required onkeyup="calcNbChar(this.id)">
+                <span class="input-group-text"><span id="dateNaissance-count">0 car.</span> 
+            </div>
+            
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="adresse" placeholder="Entrez votre adresse" required onkeyup="calcNbChar(this.id)">
+                <span class="input-group-text"><span id="adresse-count">0 car.</span> 
+                <button class="btn btn-warning" type="button" onclick="getLocation()">📍 GPS</button>
+            </div>
+
+            <!-- Carte Google Maps statique (centrée par défaut sur Paris) -->
+            <div id="map" style="margin-bottom: 20px;">
+                <img id="mapImage" src="https://maps.googleapis.com/maps/api/staticmap?markers=Paris&zoom=14&size=300x200&scale=2&key=AIzaSyAkmvI9DazzG9p77IShsz_Di7-5Qn7zkcg" alt="Google Maps" style="max-width: 100%; height: auto;">
+            </div>
+
+            <div class="input-group mb-3">
+                <input type="email" class="form-control" id="email" placeholder="Mail" required onkeyup="calcNbChar(this.id)">
+                <span class="input-group-text"><span id="email-count">0 car.</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Ajouter</button>
         </form>
-    </div>
+       
 
-    <!-- Modal d'erreur -->
-    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Erreur de validation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Erreur dans le formulaire, tous les champs sont obligatoire.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-                </div>
-            </div>
+
+        <h4 class="mt-5">Liste des Contacts</h4> (<span id="contactCount">0</span>) <button id="resetButton" class="btn btn-primary btn-sm">Reset</button>
+        <table class="table table-bordered" id="contactsTable">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Date de Naissance</th>
+                    <th>Adresse</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Les contacts ajoutés apparaîtront ici -->
+            </tbody>
+        </table>
+        <div id="successMessage" style="color: green;">
+            Contact ajouté avec succès !
         </div>
-    </div>
 
-    <!-- Modal d'affichage de la carte -->
-    <div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="mapModalLabel">Localisation sur Google Maps</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <a href="http://maps.google.com/maps?q=Paris" target="_blank">
-                        <img src="https://maps.googleapis.com/maps/api/staticmap?markers=Paris&zoom=14&size=400x300&scale=2&key=AIzaSyAkmvI9DazzG9p77IShsz_Di7-5Qn7zkcg" alt="Carte de Paris" class="img-fluid">
-                    </a>
-                  
-                    <div id="resultContainer" style="margin-top: 20px;"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <script src="./js/bootstrap.bundle.js"></script>
-    <script src="./js/form-validation.js"></script>
+
+<script src="./js/bootstrap.bundle.js"></script>
+<script src="./js/form-validation.js"></script>
+<script src="./js/GPS.js"></script>
+
 </body>
 </html>
