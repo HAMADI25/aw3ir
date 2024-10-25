@@ -1,39 +1,164 @@
 <!doctype html>
-<html>
+<html lang="fr">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>TP5</title>
+    <title> Application Météo</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <!-- Place favicon.ico in the root directory -->
+    <link rel="stylesheet" href="./css/bootstrap.css">
+    <link rel="stylesheet" href="./css/weather-icons.css">
+    <link rel="stylesheet" href="./css/weather-icons.min.css">
 
-    <style>
-        body {
-            background-color: #e9ebee;
-            font-family: system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
-            font-size: 16px;
-            margin: 0 auto;
-            max-width: 800px;
-        }
-    </style>
-
-    <!-- Code à dé-commenter si besoin de fichier CSS ou JS -->
-    <!--<link rel="stylesheet" href="style.css">-->
-    <!--<script src="main.js"></script>-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
 </head>
 
 <body>
     <nav>
         <a href="..">🏠 Index</a> / TP5
     </nav>
-    <h1>TP5</h1>
-    <!-- Add your site or application content here -->
-    <p>Hello world! This is HTML5 Boilerplate.</p>
-    <img src="../galilee.png" alt="Logo Galilee" />
+    
+    <h2 style="text-align: center;">Application Météo ☀️</h2><br>
+
+    <div id="weatherApp" class="container mt-5">
+        <h3>WebApp météo avec Vuejs</h3>
+
+        <!-- formulaire de saisie de ville -->
+        <form v-on:submit.prevent="addCity">
+            <div class="input-group">
+                <input type="search" class="form-control" v-model="formCityName" placeholder="Entrez une ville..." aria-label="Entrez une ville..." autofocus required />
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">Go!</button>
+                </span>
+            </div>
+
+            <!-- affichage du nombre de caractères saisis -->
+            <small class="text-muted">{{ formCityName.length }} car. </small>
+
+            <!-- message d'alerte en cas de soumission incorrecte -->
+            <div class="alert alert-danger mt-2" role="alert" v-if="messageForm !== ''">
+                {{ messageForm }}
+            </div>
+        </form>
+
+        <!-- Listing des villes saisies -->
+        <h4>Liste des villes ({{cityList.length}})</h4>
+        <ul class="list-group">
+            <a v-for="city in cityList" v-on:click="meteo(city)" class="list-group-item d-flex justify-content-between align-items-center">
+                {{ city.name }}
+                <button v-on:click="remove(city)" class="btn btn-secondary btn-sm" title="Supprimer de la liste">&times;</button>
+            </a>
+        </ul>
+
+        <!-- Message affiché s'il n'y a pas de ville -->
+        <div class="alert alert-primary" role="alert" v-if="cityList.length == 0">
+            Aucune ville de saisie!
+        </div>
+
+        <!-- Affichage de la météo de la ville sélectionnée -->
+        <div v-if="cityWeatherLoading">Chargement de la météo...</div>
+        <div v-if="cityWeather && !cityWeatherLoading">
+            <div class="card" style="width: 18rem;">
+                <div class="card-header">
+                    {{ cityWeather.name }} @{{ new Date(cityWeather.dt * 1000).toLocaleTimeString() }}
+                </div>
+                <img
+                    class="card-img-top"
+                    :src="'https://maps.googleapis.com/maps/api/staticmap?markers=' + cityWeather.coord.lat + ',' + cityWeather.coord.lon + '&zoom=10&size=400x300&scale=2&key=AIzaSyAkmvI9DazzG9p77IShsz_Di7-5Qn7zkcg'"
+                    alt="Carte de la ville"
+                />
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i :class="'wi wi-owm-' + cityWeather.weather[0].id"></i>
+                        {{ cityWeather.main.temp }}<i class="wi wi-celsius"></i>
+                    </h5>
+                    <p class="card-text">{{ cityWeather.weather[0].description }}</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <i class="wi wi-cloud"></i> Nuage: {{ cityWeather.clouds.all }}%
+                    </li>
+                    <li class="list-group-item">
+                        <i class="wi wi-humidity"></i> Humidité: {{ cityWeather.main.humidity }}%
+                    </li>
+                    <li class="list-group-item">
+                        <i class="wi wi-windy"></i> Vent: {{ cityWeather.wind.speed }} km/h
+                    </li>
+                    <li class="list-group-item">
+                        <i class="wi wi-sunrise"></i> Levé du soleil: {{ new Date(cityWeather.sys.sunrise * 1000).toLocaleTimeString() }}
+                    </li>
+                    <li class="list-group-item">
+                        <i class="wi wi-sunset"></i> Couché du soleil: {{ new Date(cityWeather.sys.sunset * 1000).toLocaleTimeString() }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+
+    
+    <script src="./js/libs/vue.js"></script>
+    <script src="./js/libs/bootstrap.bundle.js"></script>
+
+    <!-- Script de l'application Vue.js -->
+    <script>
+        new Vue({
+            el: '#weatherApp',
+            data: {
+                formCityName: '',
+                messageForm: '',
+                cityList: [], 
+                cityWeather: null, 
+                cityWeatherLoading: false, 
+            },
+            methods: {
+                // Méthode pour ajouter une ville
+                addCity() {
+                    if (this.formCityName.trim() === '') {
+                        this.messageForm = "Le champ ne peut pas être vide.";
+                    } else if (this.isCityExist(this.formCityName)) {
+                        this.messageForm = "Cette ville existe déjà dans la liste.";
+                    } else {
+                        this.cityList.push({ name: this.formCityName });
+                        this.messageForm = ""; // Réinitialisation du message
+                        this.formCityName = ''; // Réinitialisation du champ de saisie
+                    }
+                },
+                // Méthode pour vérifier si la ville existe déjà
+                isCityExist(cityName) {
+                    return this.cityList.some(city => city.name.toLowerCase() === cityName.toLowerCase());
+                },
+                // Méthode pour supprimer une ville
+                remove(_city) {
+                    this.cityList = this.cityList.filter(item => item.name !== _city.name);
+                },
+                // Méthode pour afficher la météo
+                meteo(_city) {
+                    this.cityWeatherLoading = true;
+                    fetch('https://api.openweathermap.org/data/2.5/weather?q=' + _city.name + '&units=metric&lang=fr&appid=eaa10ca9bcf1f187c57a2b92b5de7c0a')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Ville introuvable ou erreur API.");
+                            }
+                            return response.json();
+                        })
+                        .then(json => {
+                            this.cityWeatherLoading = false;
+                            this.cityWeather = json;
+                        })
+                        .catch(error => {
+                            this.cityWeatherLoading = false;
+                            this.cityWeather = null;
+                            console.error("Erreur API: ", error);
+                        });
+                }
+            }
+        });
+    </script>
+  
+
 </body>
 
 </html>
